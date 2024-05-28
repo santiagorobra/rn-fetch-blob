@@ -923,6 +923,8 @@ ReactNativeBlobUtil.fetch('POST', 'http://example.com/upload', {'Transfer-Encodi
 
 By default, react-native-blob-util does NOT allow connection to unknown certification provider since it's dangerous. To connect a server with self-signed certification, you need to add `trusty` to `config` explicitly. This function is available for version >= `0.5.3`
 In addition since ``0.16.0`` you'll have to define your own trust manager for android.
+
+#### Java
 ````java
 ....
 import com.ReactNativeBlobUtil.ReactNativeBlobUtilUtils;
@@ -930,8 +932,7 @@ import com.ReactNativeBlobUtil.ReactNativeBlobUtilUtils;
 
 public class MainApplication extends Application implements ReactApplication {
     ...
-    @Override
-    public void onCreate() {
+    override fun onCreate() {
        ...
         ReactNativeBlobUtilUtils.sharedTrustManager = x509TrustManager = new X509TrustManager() {
                 @Override
@@ -946,6 +947,30 @@ public class MainApplication extends Application implements ReactApplication {
                 public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                     return new java.security.cert.X509Certificate[]{};
                 }
+        };
+        ...
+    }
+````
+
+#### Kotlin
+````kotlin
+....
+import com.ReactNativeBlobUtil.ReactNativeBlobUtilUtils;
+import javax.net.ssl.X509TrustManager
+...
+
+public class MainApplication extends Application implements ReactApplication {
+    ...
+    public void onCreate() {
+       ...
+        ReactNativeBlobUtilUtils.sharedTrustManager = object : X509TrustManager {
+          override fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {}
+
+          override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {}
+
+          override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> {
+            return arrayOf()
+          }
         };
         ...
     }
